@@ -1,0 +1,63 @@
+setwd('Documents') #wherever the csv is
+stateData <- read.csv('markets_starbs.csv', header = TRUE, sep = ",")
+
+stateData[, c(5:10)] <- sapply(stateData[,c(5:10)], as.numeric)
+
+
+##plot line of best fit for 6 states
+##alabama, alaska, arizona, south dakota, new hampshire, vermont
+
+
+#subset(stateData, stateData[1] =='alabama' | stateData[1] == 'arizona' | stateData[1] == 'alaska' | 
+#  stateData[1] =='south dakota' | stateData[1] == 'new hampshire' | stateData[1] == 'vermont'
+# stateData[1] =='california')
+#subsetvector <- c(1:3, 42, 30, 46)
+
+food_truck <- c(95, 21, 160, 13, 14, 24, 432)
+farmers_market <- c(0.0437240, 0.0619720, 0.020185, 0.0724816, 0.1420973, 0.3913738, 0.03205025)
+starbuckss <- c(0.008158996, 0.035211268, 0.0387985, 0.015970516, 0.008358663, 0.006389776, 0.05395394 )
+sbiss <- c(82.30126, 97.46620, 79.21855, 100.7580, 100.3374, 124.1629, 95.85583)
+income <- c(35625, 46778, 35979, 37678, 53628, 47082, 47980)
+# lm(dependentYVar ~ independent1 + independent2..., variable containing data set)
+
+prediction <- lm(food_truck ~ farmers_market + starbuckss + sbiss + income, stateData)
+
+intercept <- (prediction$coefficients[1])
+farms <- prediction$coefficients[2]
+fdata <- unlist(stateData[1:48, 8])
+
+starbs <- prediction$coefficients[3]
+sdata <- unlist(stateData[1:48, 9])
+
+smallbusiness <- prediction$coefficients[4]
+sbdata <- unlist(stateData[1:48, 10])
+
+income <- prediction$coefficients[5]
+idata <- unlist(stateData[1:48, 6])
+
+counter <- 1
+final_factor <- NULL
+while(counter <=48){
+  final_factor[counter] <- (intercept + farms*fdata[counter] + starbs*sdata[counter] + 
+                              smallbusiness*sbdata[counter] + income*idata[counter])
+  
+  counter <- counter+1
+}
+
+states <- tolower(state.name)
+
+
+#set up map with each state assigned color
+library(maps)
+library(maptools)
+library(RColorBrewer)
+library(classInt)
+
+colors <- brewer.pal(4, "YlOrRd")
+brks <- classIntervals(final_factor, n = 4, style = "quantile")
+brks <- brks$brks
+
+map("state", states, fill = TRUE, col = colors[findInterval(final_factor, brks, all.inside = TRUE)])
+
+title(paste ("Food Trucks"))
+#legend("bottomright",legend = leglabs(round(brks)), fill=colors, bty="n")
