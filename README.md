@@ -22,7 +22,7 @@ Food Truck Predictor:
 
 
 -----------------------------------------------
-	Requires markets_starbs.csv file to run:
-	https://drive.google.com/file/d/0B5VUTew5lpRaNDlBYXRUU3NibGc/view?usp=sharing
+Requires markets_starbs.csv file to run:
+https://drive.google.com/file/d/0B5VUTew5lpRaNDlBYXRUU3NibGc/view?usp=sharing
 	
 	
